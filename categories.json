@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Backgrid.js Extensions",
+    "groups": [
+      {
+        "name": "SelectAll",
+        "classes": [
+          "Backgrid.Extension.SelectAllHeaderCell",
+          "Backgrid.Extension.SelectRowCell"
+        ]
+      }
+    ]
+  }
+]
