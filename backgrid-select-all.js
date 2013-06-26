@@ -5,7 +5,22 @@
   Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
   Licensed under the MIT @license.
 */
-(function (window, $, _, Backbone, Backgrid)  {
+(function (factory) {
+
+  // CommonJS
+  if (typeof exports == "object") {
+    module.exports = factory(require("backbone"), require("backgrid"));
+  }
+  // Browser
+  else if (typeof Backbone !== "undefined" && typeof Backgrid !== "undefined") {
+    factory(Backbone, Backgrid);
+  }
+
+}(function (Backbone, Backgrid)  {
+
+  "use strict";
+
+  var $ = Backbone.$;
 
   /**
      Renders a checkbox for row selection.
@@ -227,4 +242,4 @@
     return result;
   };
 
-}(window, jQuery, _, Backbone, Backgrid));
+}));
