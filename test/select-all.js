@@ -126,6 +126,15 @@ describe("A SelectAllHeaderCell", function () {
     expect(ids1).toBe(ids2);
   });
 
+  it("will dereference a model from selectedModels if it is removed from the underlying collection", function () {
+    var model = collection.at(0);
+    model.trigger("backgrid:selected", model, true);
+    expect(model.id in cell.selectedModels).toBe(true);
+    collection.remove(model);
+    expect(model.id in cell.selectedModels).toBe(false);
+    expect(_.size(cell.selectedModels)).toBe(0);
+  });
+
 });
 
 describe("Grid#getSelectedModels", function () {
