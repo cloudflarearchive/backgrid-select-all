@@ -562,6 +562,8 @@ _.extend(SelectFormatter.prototype, {
 var CellEditor = Backgrid.CellEditor = Backbone.View.extend({
 
   /**
+     Initializer.
+
      @param {Object} options
      @param {Backgrid.CellFormatter} options.formatter
      @param {Backgrid.Column} options.column
@@ -570,8 +572,7 @@ var CellEditor = Backgrid.CellEditor = Backbone.View.extend({
      @throws {TypeError} If `formatter` is not a formatter instance, or when
      `model` or `column` are undefined.
   */
-  constructor: function (options) {
-    CellEditor.__super__.constructor.apply(this, arguments);
+  initialize: function (options) {
     this.formatter = options.formatter;
     this.column = options.column;
     if (!(this.column instanceof Column)) {
@@ -620,14 +621,17 @@ var InputCellEditor = Backgrid.InputCellEditor = CellEditor.extend({
   },
 
   /**
+     Initializer. Removes this `el` from the DOM when a `done` event is
+     triggered.
+
      @param {Object} options
      @param {Backgrid.CellFormatter} options.formatter
      @param {Backgrid.Column} options.column
      @param {Backbone.Model} options.model
      @param {string} [options.placeholder]
   */
-  constructor: function (options) {
-    InputCellEditor.__super__.constructor.apply(this, arguments);
+  initialize: function (options) {
+    CellEditor.prototype.initialize.apply(this, arguments);
 
     if (options.placeholder) {
       this.$el.attr("placeholder", options.placeholder);
@@ -745,6 +749,8 @@ var Cell = Backgrid.Cell = Backbone.View.extend({
   },
 
   /**
+     Initializer.
+
      @param {Object} options
      @param {Backbone.Model} options.model
      @param {Backgrid.Column} options.column
@@ -752,8 +758,7 @@ var Cell = Backgrid.Cell = Backbone.View.extend({
      @throws {ReferenceError} If formatter is a string but a formatter class of
      said name cannot be found in the Backgrid module.
   */
-  constructor: function (options) {
-    Cell.__super__.constructor.apply(this, arguments);
+  initialize: function (options) {
     this.column = options.column;
     if (!(this.column instanceof Column)) {
       this.column = new Column(this.column);
@@ -923,8 +928,8 @@ var UriCell = Backgrid.UriCell = Cell.extend({
   */
   target: "_blank",
 
-  constructor: function (options) {
-    UriCell.__super__.constructor.apply(this, arguments);
+  initialize: function (options) {
+    Cell.prototype.initialize.apply(this, arguments);
     this.title = options.title || this.title;
     this.target = options.target || this.target;
   },
@@ -1002,12 +1007,14 @@ var NumberCell = Backgrid.NumberCell = Cell.extend({
   formatter: new NumberFormatter(),
 
   /**
+     Initializes this cell and the number formatter.
+
      @param {Object} options
      @param {Backbone.Model} options.model
      @param {Backgrid.Column} options.column
   */
-  constructor: function (options) {
-    NumberCell.__super__.constructor.apply(this, arguments);
+  initialize: function (options) {
+    Cell.prototype.initialize.apply(this, arguments);
     var formatter = this.formatter;
     formatter.decimals = this.decimals;
     formatter.decimalSeparator = this.decimalSeparator;
@@ -1073,12 +1080,14 @@ var DatetimeCell = Backgrid.DatetimeCell = Cell.extend({
   formatter: new DatetimeFormatter(),
 
   /**
+     Initializes this cell and the datetime formatter.
+
      @param {Object} options
      @param {Backbone.Model} options.model
      @param {Backgrid.Column} options.column
   */
-  constructor: function (options) {
-    DatetimeCell.__super__.constructor.apply(this, arguments);
+  initialize: function (options) {
+    Cell.prototype.initialize.apply(this, arguments);
     var formatter = this.formatter;
     formatter.includeDate = this.includeDate;
     formatter.includeTime = this.includeTime;
@@ -1440,14 +1449,16 @@ var SelectCell = Backgrid.SelectCell = Cell.extend({
   delimiter: ', ',
 
   /**
+     Initializer.
+
      @param {Object} options
      @param {Backbone.Model} options.model
      @param {Backgrid.Column} options.column
 
      @throws {TypeError} If `optionsValues` is undefined.
   */
-  constructor: function (options) {
-    SelectCell.__super__.constructor.apply(this, arguments);
+  initialize: function (options) {
+    Cell.prototype.initialize.apply(this, arguments);
     this.listenTo(this.model, "backgrid:edit", function (model, column, cell, editor) {
       if (column.get("name") == this.column.get("name")) {
         editor.setOptionValues(this.optionValues);
@@ -1657,9 +1668,7 @@ var Column = Backgrid.Column = Backbone.Model.extend({
      - Backgrid.Cell
      - Backgrid.CellFormatter
    */
-  constructor: function (attrs) {
-    Column.__super__.constructor.apply(this, arguments);
-
+  initialize: function (attrs) {
     if (!this.has("label")) {
       this.set({ label: this.get("name") }, { silent: true });
     }
@@ -1759,14 +1768,15 @@ var Row = Backgrid.Row = Backbone.View.extend({
   tagName: "tr",
 
   /**
+     Initializes a row view instance.
+
      @param {Object} options
      @param {Backbone.Collection.<Backgrid.Column>|Array.<Backgrid.Column>|Array.<Object>} options.columns Column metadata.
      @param {Backbone.Model} options.model The model instance to render.
 
      @throws {TypeError} If options.columns or options.model is undefined.
   */
-  constructor: function (options) {
-    Row.__super__.constructor.apply(this, arguments);
+  initialize: function (options) {
 
     var columns = this.columns = options.columns;
     if (!(columns instanceof Backbone.Collection)) {
@@ -1868,12 +1878,13 @@ var EmptyRow = Backgrid.EmptyRow = Backbone.View.extend({
   emptyText: null,
 
   /**
+     Initializer.
+
      @param {Object} options
      @param {string} options.emptyText
      @param {Backbone.Collection.<Backgrid.Column>|Array.<Backgrid.Column>|Array.<Object>} options.columns Column metadata.
    */
-  constructor: function (options) {
-    EmptyRow.__super__.constructor.apply(this, arguments);
+  initialize: function (options) {
     this.emptyText = options.emptyText;
     this.columns =  options.columns;
   },
@@ -1922,14 +1933,14 @@ var HeaderCell = Backgrid.HeaderCell = Backbone.View.extend({
   },
 
   /**
+     Initializer.
+
      @param {Object} options
      @param {Backgrid.Column|Object} options.column
 
      @throws {TypeError} If options.column or options.collection is undefined.
    */
-  constructor: function (options) {
-    HeaderCell.__super__.constructor.apply(this, arguments);
-
+  initialize: function (options) {
     this.column = options.column;
     if (!(this.column instanceof Column)) {
       this.column = new Column(this.column);
@@ -2046,6 +2057,8 @@ var HeaderRow = Backgrid.HeaderRow = Backgrid.Row.extend({
   requiredOptions: ["columns", "collection"],
 
   /**
+     Initializer.
+
      @param {Object} options
      @param {Backbone.Collection.<Backgrid.Column>|Array.<Backgrid.Column>|Array.<Object>} options.columns
      @param {Backgrid.HeaderCell} [options.headerCell] Customized default
@@ -2055,8 +2068,8 @@ var HeaderRow = Backgrid.HeaderRow = Backgrid.Row.extend({
 
      @throws {TypeError} If options.columns or options.collection is undefined.
    */
-  constructor: function () {
-    HeaderRow.__super__.constructor.apply(this, arguments);
+  initialize: function () {
+    Backgrid.Row.prototype.initialize.apply(this, arguments);
   },
 
   makeCell: function (column, options) {
@@ -2083,7 +2096,8 @@ var Header = Backgrid.Header = Backbone.View.extend({
   tagName: "thead",
 
   /**
-     Initializes this table head view to contain a single header row view.
+     Initializer. Initializes this table head view to contain a single header
+     row view.
 
      @param {Object} options
      @param {Backbone.Collection.<Backgrid.Column>|Array.<Backgrid.Column>|Array.<Object>} options.columns Column metadata.
@@ -2091,9 +2105,7 @@ var Header = Backgrid.Header = Backbone.View.extend({
 
      @throws {TypeError} If options.columns or options.model is undefined.
    */
-  constructor: function (options) {
-    Header.__super__.constructor.apply(this, arguments);
-
+  initialize: function (options) {
     this.columns = options.columns;
     if (!(this.columns instanceof Backbone.Collection)) {
       this.columns = new Columns(this.columns);
@@ -2147,6 +2159,8 @@ var Body = Backgrid.Body = Backbone.View.extend({
   tagName: "tbody",
 
   /**
+     Initializer.
+
      @param {Object} options
      @param {Backbone.Collection} options.collection
      @param {Backbone.Collection.<Backgrid.Column>|Array.<Backgrid.Column>|Array.<Object>} options.columns
@@ -2158,8 +2172,7 @@ var Body = Backgrid.Body = Backbone.View.extend({
 
      See Backgrid.Row.
   */
-  constructor: function (options) {
-    Body.__super__.constructor.apply(this, arguments);
+  initialize: function (options) {
 
     this.columns = options.columns;
     if (!(this.columns instanceof Backbone.Collection)) {
@@ -2497,8 +2510,8 @@ var Body = Backgrid.Body = Backbone.View.extend({
 */
 
 /**
-   A Footer is a generic class that only serves as a starting point for
-   subclasses to extend.
+   A Footer is a generic class that only defines a default tag `tfoot` and
+   number of required parameters in the initializer.
 
    @abstract
    @class Backgrid.Footer
@@ -2510,6 +2523,8 @@ var Footer = Backgrid.Footer = Backbone.View.extend({
   tagName: "tfoot",
 
   /**
+     Initializer.
+
      @param {Object} options
      @param {Backbone.Collection.<Backgrid.Column>|Array.<Backgrid.Column>|Array.<Object>} options.columns
      Column metadata.
@@ -2517,9 +2532,7 @@ var Footer = Backgrid.Footer = Backbone.View.extend({
 
      @throws {TypeError} If options.columns or options.collection is undefined.
   */
-  constructor: function (options) {
-    Footer.__super__.constructor.apply(this, arguments);
-
+  initialize: function (options) {
     this.columns = options.columns;
     if (!(this.columns instanceof Backbone.Collection)) {
       this.columns = new Backgrid.Columns(this.columns);
@@ -2611,9 +2624,7 @@ var Grid = Backgrid.Grid = Backbone.View.extend({
      @param {Backgrid.Row} [options.row=Backgrid.Row] An optional Row class to override the default.
      @param {Backgrid.Footer} [options.footer=Backgrid.Footer] An optional Footer class.
    */
-  constructor: function (options) {
-    Grid.__super__.constructor.apply(this, arguments);
-
+  initialize: function (options) {
     // Convert the list of column objects here first so the subviews don't have
     // to.
     if (!(options.columns instanceof Backbone.Collection)) {
