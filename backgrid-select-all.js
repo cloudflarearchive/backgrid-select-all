@@ -200,6 +200,7 @@
        underlying collection by triggering a Backbone `backgrid:select` event on
        the models themselves, passing each model and the current `checked` value
        of the checkbox in each event.
+       Also triggers a 'backgrid:select-all' event on the collection afterwards.
     */
     onChange: function (e) {
       var checked = $(e.target).prop("checked");
@@ -208,6 +209,7 @@
       collection.each(function (model) {
         model.trigger("backgrid:select", model, checked);
       });
+      collection.trigger("backgrid:select-all", collection, checked);
     }
 
   });
