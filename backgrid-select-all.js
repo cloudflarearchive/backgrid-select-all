@@ -214,7 +214,8 @@
 
   /**
      Convenient method to retrieve a list of selected models. This method only
-     exists when the `SelectAll` extension has been included.
+     exists when the `SelectAll` extension has been included. Uses pageable's
+     fullCollection if present.
 
      @member Backgrid.Grid
      @return {Array.<Backbone.Model>}
@@ -231,9 +232,11 @@
     }
 
     var result = [];
+    var collection = this.collection;
+    if('fullCollection' in collection) collection = collection.fullCollection;
     if (selectAllHeaderCell) {
       for (var modelId in selectAllHeaderCell.selectedModels) {
-        result.push(this.collection.get(modelId));
+        result.push(collection.get(modelId));
       }
     }
 
