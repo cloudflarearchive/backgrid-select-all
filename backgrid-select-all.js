@@ -214,8 +214,8 @@
 
   /**
      Convenient method to retrieve a list of selected models. This method only
-     exists when the `SelectAll` extension has been included. Uses pageable's
-     fullCollection if present.
+     exists when the `SelectAll` extension has been included. Selected models
+     are retained across pagination.
 
      @member Backgrid.Grid
      @return {Array.<Backbone.Model>}

@@ -170,8 +170,8 @@ describe("Grid#getSelectedModels", function () {
     expect(selectedModels[1].id).toBe(2);
   });
 
-  it("will return a list of selected models when the collection is pageable", function(){
-    var pageable = window.pageable = new Backbone.PageableCollection([{id:1}, {id:2}, {id:3}], {
+  it("will return a list of selected models across pageable pages", function(){
+    var pageable = new Backbone.PageableCollection([{id:1}, {id:2}, {id:3}], {
       state: { pageSize: 2 },
       mode: "client"
     });
