@@ -164,24 +164,24 @@
       }
 
       var collection = this.collection;
-      var selectedModels = this.selectedModels = {};
+      this.selectedModels = {};
       this.listenTo(collection, "backgrid:selected", function (model, selected) {
-        if (selected) selectedModels[model.id || model.cid] = model;
+        if (selected) this.selectedModels[model.id || model.cid] = model;
         else {
-          delete selectedModels[model.id || model.cid];
+          delete this.selectedModels[model.id || model.cid];
           this.$el.find(":checkbox").prop("checked", false);
         }
       });
 
       this.listenTo(collection, "remove", function (model) {
-        delete selectedModels[model.id || model.cid];
+        delete this.selectedModels[model.id || model.cid];
       });
 
       this.listenTo(collection, "backgrid:refresh", function () {
         this.$el.find(":checkbox").prop("checked", false);
         for (var i = 0; i < collection.length; i++) {
           var model = collection.at(i);
-          if (selectedModels[model.id || model.cid]) {
+          if (this.selectedModels[model.id || model.cid]) {
             model.trigger('backgrid:select', model, true);
           }
         }
@@ -238,6 +238,62 @@
     }
 
     return result;
+  };
+
+  /**
+     Convenient method to retrieve a list of selected models' ids. This method only
+     exists when the `SelectAll` extension has been included.
+
+     @member Backgrid.Grid
+     @return {Array.<Backbone.Model.id>}
+  */
+  Backgrid.Grid.prototype.getSelectedIds = function () {
+    var selectAllHeaderCell;
+    var headerCells = this.header.row.cells;
+    for (var i = 0, l = headerCells.length; i < l; i++) {
+      var headerCell = headerCells[i];
+      if (headerCell instanceof SelectAllHeaderCell) {
+        selectAllHeaderCell = headerCell;
+        break;
+      }
+    }
+
+    var result = [];
+    if (selectAllHeaderCell) {
+      for (var modelId in selectAllHeaderCell.selectedModels) {
+        result.push(modelId);
+      }
+    }
+
+    return result;
+  };
+
+  /**
+     Convenient method to clear selected models. This method only
+     exists when the `SelectAll` extension has been included.
+
+     @member Backgrid.Grid
+     @return {true : false}
+  */
+  Backgrid.Grid.prototype.clearSelection = function () {
+    var selectAllHeaderCell;
+    var headerCells = this.header.row.cells;
+    for (var i = 0, l = headerCells.length; i < l; i++) {
+      var headerCell = headerCells[i];
+      if (headerCell instanceof SelectAllHeaderCell) {
+        selectAllHeaderCell = headerCell;
+        break;
+      }
+    }
+
+    var result = [];
+    if (selectAllHeaderCell) {
+      selectAllHeaderCell.selectedModels = {};
+      this.body.refresh();
+      return true;
+    }
+
+    return false;
   };
 
 }));
