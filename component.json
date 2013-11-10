@@ -5,8 +5,7 @@
   "version": "0.3.0",
   "keywords": [
     "backbone",
-    "backgrid",
-    "filter"
+    "backgrid"
   ],
   "main": "backgrid-select-all.js",
   "scripts": [
