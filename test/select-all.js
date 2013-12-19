@@ -170,4 +170,37 @@ describe("Grid#getSelectedModels", function () {
     expect(selectedModels[1].id).toBe(2);
   });
 
+  it("will return a list of selected models across pageable pages", function(){
+    var pageable = new Backbone.PageableCollection([{id:1}, {id:2}, {id:3}], {
+      state: { pageSize: 2 },
+      mode: "client"
+    });
+    var one = pageable.get(1);
+    var three = pageable.fullCollection.get(3);
+
+    var grid = new Backgrid.Grid({
+      collection: pageable,
+      columns: [{
+        name: "",
+        cell: "select-row",
+        headerCell: "select-all"
+      }, {
+        name: "id",
+        cell: "integer"
+      }]
+    });
+
+    grid.render();
+
+    one.trigger("backgrid:selected", one, true);
+    pageable.getLastPage();
+    three.trigger("backgrid:selected", three, true);
+
+    var selectedModels = grid.getSelectedModels();
+
+    expect(selectedModels.length).toBe(2);
+    expect(selectedModels[0]).toBe(one);
+    expect(selectedModels[1]).toBe(three);
+  });
+
 });
