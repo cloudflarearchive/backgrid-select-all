@@ -196,11 +196,11 @@
     },
 
     /**
-       Progagates the checked value of this checkbox to all the models of the
+       Propagates the checked value of this checkbox to all the models of the
        underlying collection by triggering a Backbone `backgrid:select` event on
        the models themselves, passing each model and the current `checked` value
-       of the checkbox in each event.
-       Also triggers a 'backgrid:select-all' event on the collection afterwards.
+       of the checkbox in each event. Also triggers a 'backgrid:select-all'
+       event on the collection afterwards.
     */
     onChange: function (e) {
       var checked = $(e.target).prop("checked");
