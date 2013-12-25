@@ -139,7 +139,49 @@ describe("A SelectAllHeaderCell", function () {
     
   });
 
-  describe("when using a Backbone.PageableCollection", function () {
+  describe("when using a Backbone.PageableCollection unders server mode", function () {
+    var collection;
+    var cell;
+
+    beforeEach(function () {
+      collection = new Backbone.PageableCollection([{id: 1}, {id: 2}, {id: 3}], {
+        state: {
+          pageSize: 2
+        }
+      });
+      cell = new Backgrid.Extension.SelectAllHeaderCell({
+        collection: collection,
+        column: {
+          headerCell: "select-all",
+          cell: "select-row",
+          name: ""
+        }
+      });
+
+      cell.render();
+    });
+
+    it("will trigger a `backgrid:select` event on each previously selected model after a `backgrid:refresh` event", function () {
+      var selectedIds = [];
+      collection.on("backgrid:select", function (model) {
+        selectedIds.push(model.id);
+      });
+      cell.$el.find(":checkbox").prop("checked", true).change();
+
+      collection.trigger("backgrid:refresh");
+      collection.reset([{id: 4}, {id: 5}]);
+      collection.trigger("backgrid:refresh");
+
+      expect(_.contains(selectedIds, 1)).toBe(true);
+      expect(_.contains(selectedIds, 2)).toBe(true);
+      expect(_.contains(selectedIds, 3)).toBe(true);
+      expect(_.contains(selectedIds, 4)).toBe(true);
+      expect(_.contains(selectedIds, 5)).toBe(true);
+    });
+
+  });
+
+  describe("when using a Backbone.PageableCollection under client mode", function () {
     var collection;
     var cell;
 
