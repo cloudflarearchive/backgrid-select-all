@@ -178,9 +178,8 @@
         delete selectedModels[model.id || model.cid];
       });
 
-      var self = this;
       this.listenTo(collection, "backgrid:refresh", function () {
-        var checked = self.$el.find("input[type=checkbox]").prop("checked");
+        var checked = this.$el.find("input[type=checkbox]").prop("checked");
         for (var i = 0; i < collection.length; i++) {
           var model = collection.at(i);
           if (checked || selectedModels[model.id || model.cid]) {
