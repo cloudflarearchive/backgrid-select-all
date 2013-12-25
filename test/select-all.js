@@ -62,7 +62,6 @@ describe("A SelectRowCell", function () {
 
 });
 
-// TODO: test pageable
 describe("A SelectAllHeaderCell", function () {
 
   describe("when using a plain backbone collection", function () {
