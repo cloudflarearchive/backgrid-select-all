@@ -58,16 +58,16 @@
         this.column = new Backgrid.Column(this.column);
       }
 
-      this.listenTo(this.model, "backgrid:select", function (model, selected) {
-        this.$el.find(":checkbox").prop("checked", selected).change();
-      });
-
-      var column = this.column, $el = this.$el;
+      var column = this.column, model = this.model, $el = this.$el;
       this.listenTo(column, "change:renderable", function (column, renderable) {
         $el.toggleClass("renderable", renderable);
       });
 
-      if (column.get("renderable")) $el.addClass("renderable");
+      if (Backgrid.callByNeed(column.renderable(), column, model)) $el.addClass("renderable");
+
+      this.listenTo(model, "backgrid:select", function (model, selected) {
+        this.$el.find(":checkbox").prop("checked", selected).change();
+      });
     },
 
     /**
@@ -108,8 +108,8 @@
        checkbox's `checked` value.
     */
     onChange: function (e) {
-      var checked = $(e.target).prop('checked');
-      this.$el.parent().toggleClass('selected', checked);
+      var checked = $(e.target).prop("checked");
+      this.$el.parent().toggleClass("selected", checked);
       this.model.trigger("backgrid:selected", this.model, checked);
     },
 
@@ -165,7 +165,8 @@
 
       var collection = this.collection;
       var selectedModels = this.selectedModels = {};
-      this.listenTo(collection, "backgrid:selected", function (model, selected) {
+      this.listenTo(collection.fullCollection || collection,
+                    "backgrid:selected", function (model, selected) {
         if (selected) selectedModels[model.id || model.cid] = model;
         else {
           delete selectedModels[model.id || model.cid];
@@ -173,16 +174,15 @@
         }
       });
 
-      this.listenTo(collection, "remove", function (model) {
+      this.listenTo(collection.fullCollection || collection, "remove", function (model) {
         delete selectedModels[model.id || model.cid];
       });
 
       this.listenTo(collection, "backgrid:refresh", function () {
-        this.$el.find(":checkbox").prop("checked", false);
         for (var i = 0; i < collection.length; i++) {
           var model = collection.at(i);
           if (selectedModels[model.id || model.cid]) {
-            model.trigger('backgrid:select', model, true);
+            model.trigger("backgrid:select", model, true);
           }
         }
       });
@@ -192,7 +192,7 @@
         $el.toggleClass("renderable", renderable);
       });
 
-      if (column.get("renderable")) $el.addClass("renderable");
+      if (Backgrid.callByNeed(column.renderable(), column, collection)) $el.addClass("renderable");
     },
 
     /**
@@ -205,11 +205,12 @@
     onChange: function (e) {
       var checked = $(e.target).prop("checked");
 
-      var collection = this.collection;
+      var collection = this.collection.fullCollection || this.collection;
       collection.each(function (model) {
         model.trigger("backgrid:select", model, checked);
       });
-      collection.trigger("backgrid:select-all", collection, checked);
+
+      this.collection.trigger("backgrid:select-all", this.collection, checked);
     }
 
   });
@@ -234,11 +235,10 @@
     }
 
     var result = [];
-    var collection = this.collection;
-    if('fullCollection' in collection) collection = collection.fullCollection;
     if (selectAllHeaderCell) {
-      for (var modelId in selectAllHeaderCell.selectedModels) {
-        result.push(collection.get(modelId));
+      var selectedModels = selectAllHeaderCell.selectedModels;
+      for (var modelId in selectedModels) {
+        result.push(selectedModels[modelId]);
       }
     }
 

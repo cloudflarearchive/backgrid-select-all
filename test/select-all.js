@@ -62,77 +62,163 @@ describe("A SelectRowCell", function () {
 
 });
 
+// TODO: test pageable
 describe("A SelectAllHeaderCell", function () {
 
-  var collection;
-  var cell;
+  describe("when using a plain backbone collection", function () {
+    var collection;
+    var cell;
 
-  beforeEach(function () {
-    collection = new Backbone.Collection([{id: 1}, {id: 2}]);
-    cell = new Backgrid.Extension.SelectAllHeaderCell({
-      collection: collection,
-      column: {
-        headerCell: "select-all",
-        cell: "select-row",
-        name: ""
-      }
+    beforeEach(function () {
+      collection = new Backbone.Collection([{id: 1}, {id: 2}]);
+      cell = new Backgrid.Extension.SelectAllHeaderCell({
+        collection: collection,
+        column: {
+          headerCell: "select-all",
+          cell: "select-row",
+          name: ""
+        }
+      });
+
+      cell.render();
     });
 
-    cell.render();
-  });
-
-  it("renders a renderable header cell", function () {
-    expect(cell.$el.hasClass("renderable")).toBe(true);
-  });
-
-  it("triggers a `backgrid:select` event on each model when its checkbox is checked", function () {
-    var selectTriggerArgs = [];
-    collection.on("backgrid:select", function () {
-      selectTriggerArgs.push(Array.prototype.slice.apply(arguments));
+    it("renders a renderable header cell", function () {
+      expect(cell.$el.hasClass("renderable")).toBe(true);
     });
 
-    cell.$el.find(":checkbox").prop("checked", true).change();
-    expect(selectTriggerArgs.length).toBe(2);
-    expect(selectTriggerArgs[0][0]).toBe(collection.at(0));
-    expect(selectTriggerArgs[0][1]).toBe(true);
-    expect(selectTriggerArgs[1][0]).toBe(collection.at(1));
-    expect(selectTriggerArgs[1][1]).toBe(true);
-  });
+    it("triggers a `backgrid:select` event on each model and a `backgrid:select-all` event on the collection when its checkbox is checked", function () {
+      var selectTriggerArgs = [];
+      collection.on("backgrid:select", function () {
+        selectTriggerArgs.push(Array.prototype.slice.apply(arguments));
+      });
 
-  it("unchecks itself when a model triggers a `backgrid:selected` event with a false value", function () {
-    cell.$el.find(":checkbox").prop("checked", true).change();
-    collection.at(0).trigger("backgrid:selected", collection.at(0), false);
-    expect(cell.$el.find(":checkbox").prop("checked"), false);
-  });
+      var selectAllTriggerArgs = [];
+      collection.on("backgrid:select-all", function () {
+        selectAllTriggerArgs.push(Array.prototype.slice.apply(arguments));
+      });
 
-  it("will trigger a `backgrid:select` event on each previously selected model after a `backgrid:refresh` event", function () {
-    var ids1 = '';
-    collection.on("backgrid:select", function (model) {
-      ids1 = ids1 + model.id;
+      cell.$el.find(":checkbox").prop("checked", true).change();
+      expect(selectTriggerArgs.length).toBe(2);
+      expect(selectTriggerArgs[0][0]).toBe(collection.at(0));
+      expect(selectTriggerArgs[0][1]).toBe(true);
+      expect(selectTriggerArgs[1][0]).toBe(collection.at(1));
+      expect(selectTriggerArgs[1][1]).toBe(true);
+      expect(selectAllTriggerArgs.length).toBe(1);
+      expect(selectAllTriggerArgs[0][0]).toBe(collection);
+      expect(selectAllTriggerArgs[0][1]).toBe(true);
+    });
+
+    it("unchecks itself when a model triggers a `backgrid:selected` event with a false value", function () {
+      cell.$el.find(":checkbox").prop("checked", true).change();
+      collection.at(0).trigger("backgrid:selected", collection.at(0), false);
+      expect(cell.$el.find(":checkbox").prop("checked"), false);
+    });
+
+    it("will trigger a `backgrid:select` event on each previously selected model after a `backgrid:refresh` event", function () {
+      var selectedIds = [];
+      collection.on("backgrid:select", function (model) {
+        selectedIds.push(model.id);
+      });
+      cell.$el.find(":checkbox").prop("checked", true).change();
+
+      collection.trigger("backgrid:refresh");
+
+      expect(_.contains(selectedIds, 1)).toBe(true);
+      expect(_.contains(selectedIds, 2)).toBe(true);
+    });
+
+    it("will dereference a model from selectedModels if it is removed from the underlying collection", function () {
+      var model = collection.at(0);
       model.trigger("backgrid:selected", model, true);
+      expect(model.id in cell.selectedModels).toBe(true);
+      collection.remove(model);
+      expect(model.id in cell.selectedModels).toBe(false);
+      expect(_.size(cell.selectedModels)).toBe(0);
     });
-    cell.$el.find(":checkbox").prop("checked", true).change();
-    collection.off("backgrid:select");
-
-    var ids2 = '';
-    collection.on("backgrid:select", function (model) {
-      ids2 = ids2 + model.id;
-    });
-    collection.trigger("backgrid:refresh");
-    collection.off("backgrid:select");
-
-    expect(ids1).not.toBe('');
-    expect(ids2).not.toBe('');
-    expect(ids1).toBe(ids2);
+    
   });
 
-  it("will dereference a model from selectedModels if it is removed from the underlying collection", function () {
-    var model = collection.at(0);
-    model.trigger("backgrid:selected", model, true);
-    expect(model.id in cell.selectedModels).toBe(true);
-    collection.remove(model);
-    expect(model.id in cell.selectedModels).toBe(false);
-    expect(_.size(cell.selectedModels)).toBe(0);
+  describe("when using a Backbone.PageableCollection", function () {
+    var collection;
+    var cell;
+
+    beforeEach(function () {
+      collection = new Backbone.PageableCollection([{id: 1}, {id: 2}, {id: 3}], {
+        state: {
+          pageSize: 2
+        },
+        mode: "client"
+      });
+      cell = new Backgrid.Extension.SelectAllHeaderCell({
+        collection: collection,
+        column: {
+          headerCell: "select-all",
+          cell: "select-row",
+          name: ""
+        }
+      });
+
+      cell.render();
+    });
+
+    it("renders a renderable header cell", function () {
+      expect(cell.$el.hasClass("renderable")).toBe(true);
+    });
+
+    it("triggers a `backgrid:select` event on each model and a `backgrid:select-all` event on the collection when its checkbox is checked", function () {
+      var selectTriggerArgs = [];
+      collection.fullCollection.on("backgrid:select", function () {
+        selectTriggerArgs.push(Array.prototype.slice.apply(arguments));
+      });
+
+      var selectAllTriggerArgs = [];
+      collection.on("backgrid:select-all", function () {
+        selectAllTriggerArgs.push(Array.prototype.slice.apply(arguments));
+      });
+
+      cell.$el.find(":checkbox").prop("checked", true).change();
+      expect(selectTriggerArgs.length).toBe(3);
+      expect(selectTriggerArgs[0][0]).toBe(collection.fullCollection.at(0));
+      expect(selectTriggerArgs[0][1]).toBe(true);
+      expect(selectTriggerArgs[1][0]).toBe(collection.fullCollection.at(1));
+      expect(selectTriggerArgs[1][1]).toBe(true);
+      expect(selectTriggerArgs[2][0]).toBe(collection.fullCollection.at(2));
+      expect(selectTriggerArgs[2][1]).toBe(true);
+      expect(selectAllTriggerArgs.length).toBe(1);
+      expect(selectAllTriggerArgs[0][0]).toBe(collection);
+      expect(selectAllTriggerArgs[0][1]).toBe(true);
+    });
+
+    it("unchecks itself when a model triggers a `backgrid:selected` event with a false value", function () {
+      cell.$el.find(":checkbox").prop("checked", true).change();
+      collection.fullCollection.last().trigger("backgrid:selected", collection.fullCollection.last(), false);
+      expect(cell.$el.find(":checkbox").prop("checked"), false);
+    });
+
+    it("will trigger a `backgrid:select` event on each previously selected model after a `backgrid:refresh` event", function () {
+      var selectedIds = [];
+      collection.fullCollection.on("backgrid:select", function (model) {
+        selectedIds.push(model.id);
+      });
+      cell.$el.find(":checkbox").prop("checked", true).change();
+
+      collection.trigger("backgrid:refresh");
+
+      expect(_.contains(selectedIds, 1)).toBe(true);
+      expect(_.contains(selectedIds, 2)).toBe(true);
+      expect(_.contains(selectedIds, 3)).toBe(true);
+    });
+
+    it("will dereference a model from selectedModels if it is removed from the underlying collection", function () {
+      var model = collection.fullCollection.last();
+      model.trigger("backgrid:selected", model, true);
+      expect(model.id in cell.selectedModels).toBe(true);
+      collection.fullCollection.remove(model);
+      expect(model.id in cell.selectedModels).toBe(false);
+      expect(_.size(cell.selectedModels)).toBe(0);
+    });
+
   });
 
 });
