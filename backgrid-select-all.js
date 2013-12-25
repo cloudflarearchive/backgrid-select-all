@@ -180,14 +180,10 @@
 
       var self = this;
       this.listenTo(collection, "backgrid:refresh", function () {
-        var mode = collection.mode;
         var checked = self.$el.find("input[type=checkbox]").prop("checked");
         for (var i = 0; i < collection.length; i++) {
           var model = collection.at(i);
-          if (mode == "server" && checked) {
-            model.trigger("backgrid:select", model, true);
-          }
-          else if (selectedModels[model.id || model.cid]) {
+          if (checked || selectedModels[model.id || model.cid]) {
             model.trigger("backgrid:select", model, true);
           }
         }
