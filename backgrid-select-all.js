@@ -246,4 +246,18 @@
     return result;
   };
 
+  /**
+     Convenient method to deselect the selected models. This method is only
+     available when the `SelectAll` extension has been included.
+
+     @member Backgrid.Grid
+   */
+  Backgrid.Grid.prototype.clearSelectedModels = function () {
+    var selectedModels = this.getSelectedModels();
+    for (var i = 0, l = selectedModels.length; i < l; i++) {
+      var model = selectedModels[i];
+      model.trigger("backgrid:select", model, false);
+    }
+  };
+
 }));
