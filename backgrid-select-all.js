@@ -167,7 +167,7 @@
       var selectedModels = this.selectedModels = {};
       this.listenTo(collection.fullCollection || collection,
                     "backgrid:selected", function (model, selected) {
-        if (selected) selectedModels[model.id || model.cid] = model;
+        if (selected) selectedModels[model.id || model.cid] = 1;
         else {
           delete selectedModels[model.id || model.cid];
           this.$el.find("input[type=checkbox]").prop("checked", false);
@@ -238,8 +238,9 @@
     var result = [];
     if (selectAllHeaderCell) {
       var selectedModels = selectAllHeaderCell.selectedModels;
+      var collection = this.collection.fullCollection || this.collection;
       for (var modelId in selectedModels) {
-        result.push(selectedModels[modelId]);
+        result.push(collection.get(modelId));
       }
     }
 
