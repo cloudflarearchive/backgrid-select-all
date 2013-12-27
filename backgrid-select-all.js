@@ -20,8 +20,6 @@
 
   "use strict";
 
-  var $ = Backbone.$;
-
   /**
      Renders a checkbox for row selection.
 
@@ -107,8 +105,8 @@
        `backgrid:selected` event with a reference of the model and the
        checkbox's `checked` value.
     */
-    onChange: function (e) {
-      var checked = $(e.target).prop("checked");
+    onChange: function () {
+      var checked = this.$el.find("input[type=checkbox]").prop("checked");
       this.$el.parent().toggleClass("selected", checked);
       this.model.trigger("backgrid:selected", this.model, checked);
     },
@@ -203,11 +201,11 @@
        of the checkbox in each event. Also triggers a 'backgrid:select-all'
        event on the collection afterwards.
     */
-    onChange: function (e) {
-      var checked = $(e.target).prop("checked");
+    onChange: function () {
+      var checked = this.$el.find("input[type=checkbox]").prop("checked");
 
-      var collection = this.collection.fullCollection || this.collection;
-      collection.each(function (model) {
+      var collection = this.collection;
+      (collection.fullCollection || collection).each(function (model) {
         model.trigger("backgrid:select", model, checked);
       });
 
