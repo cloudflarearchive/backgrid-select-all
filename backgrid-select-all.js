@@ -195,17 +195,31 @@
     /**
        Propagates the checked value of this checkbox to all the models of the
        underlying collection by triggering a Backbone `backgrid:select` event on
-       the models themselves, passing each model and the current `checked` value
-       of the checkbox in each event. Also triggers a 'backgrid:select-all'
-       event on the collection afterwards.
+       the models on the current page, passing each model and the current
+       `checked` value of the checkbox in each event.
+
+       A `backgrid:selected` event will also be triggered with the current
+       `checked` value on all the models regardless of whether they are on the
+       current page.
+
+       This method triggers a 'backgrid:select-all' event on the collection
+       afterwards.
     */
     onChange: function () {
       var checked = this.$el.find("input[type=checkbox]").prop("checked");
 
       var collection = this.collection;
-      (collection.fullCollection || collection).each(function (model) {
+      collection.each(function (model) {
         model.trigger("backgrid:select", model, checked);
       });
+
+      if (collection.fullCollection) {
+        collection.fullCollection.each(function (model) {
+          if (!collection.get(model.cid)) {
+            model.trigger("backgrid:selected", model, checked);
+          }
+        });
+      }
 
       this.collection.trigger("backgrid:select-all", this.collection, checked);
     }

@@ -243,10 +243,15 @@ describe("A SelectAllHeaderCell", function () {
       expect(cell.$el.hasClass("renderable")).toBe(true);
     });
 
-    it("triggers a `backgrid:select` event on each model and a `backgrid:select-all` event on the collection when its checkbox is checked", function () {
+    it("triggers a `backgrid:select` event on each model on the current page, a `backgrid:selected` event on the models on other pages, and a `backgrid:select-all` event on the collection", function () {
       var selectTriggerArgs = [];
       collection.fullCollection.on("backgrid:select", function () {
         selectTriggerArgs.push(Array.prototype.slice.apply(arguments));
+      });
+
+      var selectedTriggerArgs = [];
+      collection.fullCollection.on("backgrid:selected", function () {
+        selectedTriggerArgs.push(Array.prototype.slice.apply(arguments));
       });
 
       var selectAllTriggerArgs = [];
@@ -255,13 +260,14 @@ describe("A SelectAllHeaderCell", function () {
       });
 
       cell.$el.find(":checkbox").prop("checked", true).change();
-      expect(selectTriggerArgs.length).toBe(3);
+      expect(selectTriggerArgs.length).toBe(2);
       expect(selectTriggerArgs[0][0]).toBe(collection.fullCollection.at(0));
       expect(selectTriggerArgs[0][1]).toBe(true);
       expect(selectTriggerArgs[1][0]).toBe(collection.fullCollection.at(1));
       expect(selectTriggerArgs[1][1]).toBe(true);
-      expect(selectTriggerArgs[2][0]).toBe(collection.fullCollection.at(2));
-      expect(selectTriggerArgs[2][1]).toBe(true);
+      expect(selectedTriggerArgs.length).toBe(1);
+      expect(selectedTriggerArgs[0][0]).toBe(collection.fullCollection.at(2));
+      expect(selectedTriggerArgs[0][1]).toBe(true);
       expect(selectAllTriggerArgs.length).toBe(1);
       expect(selectAllTriggerArgs[0][0]).toBe(collection);
       expect(selectAllTriggerArgs[0][1]).toBe(true);
@@ -273,17 +279,16 @@ describe("A SelectAllHeaderCell", function () {
       expect(cell.$el.find(":checkbox").prop("checked"), false);
     });
 
-    it("will trigger a `backgrid:select` event on all models after a `backgrid:refresh` event if checked", function () {
+    it("triggers a `backgrid:select` event on each model on the current page after a `backgrid:refresh` event if checked", function () {
       var selectedIds = {};
-      collection.fullCollection.on("backgrid:select", function (model) {
+      collection.on("backgrid:select", function (model) {
         selectedIds[model.id] = true;
       });
       cell.$el.find(":checkbox").prop("checked", true).change();
       collection.trigger("backgrid:refresh");
-      expect(_.size(selectedIds)).toBe(3);
+      expect(_.size(selectedIds)).toBe(2);
       expect("1" in selectedIds).toBe(true);
       expect("2" in selectedIds).toBe(true);
-      expect("3" in selectedIds).toBe(true);
 
       collection.reset([{id: 3}, {id: 4}]);
       collection.trigger("backgrid:refresh");
@@ -314,6 +319,14 @@ describe("A SelectAllHeaderCell", function () {
       expect(model.id in cell.selectedModels).toBe(true);
       collection.fullCollection.remove(model);
       expect(model.id in cell.selectedModels).toBe(false);
+      expect(_.size(cell.selectedModels)).toBe(0);
+    });
+
+    it("unchecking after checking will clear selectedModels", function () {
+      cell.$el.find(":checkbox").prop("checked", true).change();
+      // this will normally be 3 if the select row cells are in play, but this is correct
+      expect(_.size(cell.selectedModels)).toBe(1);
+      cell.$el.find(":checkbox").prop("checked", false).change();
       expect(_.size(cell.selectedModels)).toBe(0);
     });
 
