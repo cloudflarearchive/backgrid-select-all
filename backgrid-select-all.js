@@ -5,18 +5,16 @@
   Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
   Licensed under the MIT @license.
 */
-(function (factory) {
+(function (root, factory) {
 
   // CommonJS
   if (typeof exports == "object") {
     module.exports = factory(require("backbone"), require("backgrid"));
   }
   // Browser
-  else if (typeof Backbone !== "undefined" && typeof Backgrid !== "undefined") {
-    factory(Backbone, Backgrid);
-  }
+  else factory(root.Backbone, root.Backgrid);
 
-}(function (Backbone, Backgrid)  {
+}(this, function (Backbone, Backgrid) {
 
   "use strict";
 
