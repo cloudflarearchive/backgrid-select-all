@@ -6,6 +6,6 @@ backgrid-select-all
 Usage
 ====
 
-See the [SelectAll](http://wyuenho.github.com/backgrid/#api-select-all) section in
+See the [SelectAll](http://backgridjs.com/ref/extensions/select-all.html) section in
 the documentation.
 
