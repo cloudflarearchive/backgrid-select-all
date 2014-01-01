@@ -15,10 +15,7 @@
                              require("backbone"));
   }
   // Browser
-  else if (typeof _ !== "undefined" &&
-    typeof Backbone !== "undefined") {
-    factory(window, _, Backbone);
-  }
+  else factory(this, this._, this.Backbone);
 }(function (root, _, Backbone) {
 
   "use strict";
@@ -2154,10 +2151,15 @@ var HeaderCell = Backgrid.HeaderCell = Backbone.View.extend({
   render: function () {
     this.$el.empty();
     var column = this.column;
-    var $label = $("<a>").text(column.get("label"));
     var sortable = Backgrid.callByNeed(column.sortable(), column, this.collection);
-    if (sortable) $label.append("<b class='sort-caret'></b>");
-    this.$el.append($label);
+    var label;
+    if(sortable){
+      label = $("<a>").text(column.get("label")).append("<b class='sort-caret'></b>");
+    } else {
+      label = document.createTextNode(column.get("label"));
+    }
+
+    this.$el.append(label);
     this.$el.addClass(column.get("name"));
     this.delegateEvents();
     this.direction(column.get("direction"));
