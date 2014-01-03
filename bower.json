@@ -1,0 +1,25 @@
+{
+  "name": "backgrid-select-all",
+  "main": [
+    "backgrid-select-all.js",
+    "backgrid-select-all.css"
+  ],
+  "version": "0.3.0-beta",
+  "description": "Backgrid.js extension for multiple selections.",
+  "homepage": "https://github.com/wyuenho/backgrid-select-all",
+  "authors": [
+    "Jimmy Yuen Ho Wong <wyuenho@gmail.com>"
+  ],
+  "keywords": [
+    "backbone",
+    "backgrid"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
