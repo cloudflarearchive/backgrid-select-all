@@ -1,6 +1,6 @@
 {
   "name": "backgrid-select-all",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Backgrid.js extension for multiple selections.",
   "main": "backgrid-select-all.js",
   "scripts": {

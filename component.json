@@ -2,7 +2,7 @@
   "name": "backgrid-select-all",
   "repo": "wyuenho/backgrid-select-all",
   "description": "Backgrid.js extension for multiple selections.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "keywords": [
     "backbone",
     "backgrid"
@@ -16,7 +16,7 @@
   ],
   "dependencies": {
     "jashkenas/backbone": "*",
-    "wyuenho/backgrid": "0.3.1"
+    "wyuenho/backgrid": "0.3.2"
   },
   "license": "MIT"
 }
