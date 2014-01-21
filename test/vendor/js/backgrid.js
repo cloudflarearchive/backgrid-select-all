@@ -88,7 +88,7 @@ var Backgrid = root.Backgrid = {
 
     var context = arguments[1];
     var args = [].slice.call(arguments, 2);
-    return value.apply(context, !!(args + '') ? args : void 0);
+    return value.apply(context, !!(args + '') ? args : []);
   }
 
 };
@@ -1455,7 +1455,7 @@ var SelectCellEditor = Backgrid.SelectCellEditor = CellEditor.extend({
         this.$el.append(this.template({
           text: optionText,
           value: optionValue,
-          selected: selectedValues.indexOf(optionValue) > -1
+          selected: _.indexOf(selectedValues, optionValue) > -1
         }));
       }
       else if (_.isObject(optionValue)) {
@@ -2011,9 +2011,9 @@ var EmptyRow = Backgrid.EmptyRow = Backbone.View.extend({
 
     var td = document.createElement("td");
     td.setAttribute("colspan", this.columns.length);
-    td.textContent = _.result(this, "emptyText");
+    td.appendChild(document.createTextNode(_.result(this, "emptyText")));
 
-    this.el.setAttribute("class", "empty");
+    this.el.className = "empty";
     this.el.appendChild(td);
 
     return this;
@@ -2078,7 +2078,7 @@ var HeaderCell = Backgrid.HeaderCell = Backbone.View.extend({
     if (Backgrid.callByNeed(column.sortable(), column, collection)) $el.addClass("sortable");
     if (Backgrid.callByNeed(column.renderable(), column, collection)) $el.addClass("renderable");
 
-    this.listenTo(collection, "sort", this.removeCellDirection);
+    this.listenTo(collection.fullCollection || collection, "sort", this.removeCellDirection);
   },
 
   /**
@@ -2491,8 +2491,8 @@ var Body = Backgrid.Body = Backbone.View.extend({
      Backbone.PageableCollection, sorting will be done globally on all the pages
      and the current page will then be returned.
 
-     Triggers a Backbone `backgrid:sort` event from the collection when done
-     with the column, direction, comparator and a reference to the collection.
+     Triggers a Backbone `backgrid:sorted` event from the collection when done
+     with the column, direction and a reference to the collection.
 
      @param {Backgrid.Column} column
      @param {null|"ascending"|"descending"} direction
@@ -2528,16 +2528,23 @@ var Body = Backgrid.Body = Backbone.View.extend({
                             {sortValue: column.sortValue()});
 
       if (collection.fullCollection) {
+        // If order is null, pageable will remove the comparator on both sides,
+        // in this case the default insertion order comparator needs to be
+        // attached to get back to the order before sorting.
         if (collection.fullCollection.comparator == null) {
           collection.fullCollection.comparator = comparator;
         }
         collection.fullCollection.sort();
+        collection.trigger("backgrid:sorted", column, direction, collection);
       }
-      else collection.fetch({reset: true});
+      else collection.fetch({reset: true, success: function () {
+        collection.trigger("backgrid:sorted", column, direction, collection);
+      }});
     }
     else {
       collection.comparator = comparator;
       collection.sort();
+      collection.trigger("backgrid:sorted", column, direction, collection);
     }
 
     column.set("direction", direction);
