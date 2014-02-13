@@ -62,22 +62,29 @@
       if (Backgrid.callByNeed(column.renderable(), column, model)) $el.addClass("renderable");
 
       this.listenTo(model, "backgrid:select", function (model, selected) {
-        this.$el.find("input[type=checkbox]").prop("checked", selected).change();
+        this.checkbox().prop("checked", selected).change();
       });
+    },
+
+    /**
+       Returns the checkbox.
+     */
+    checkbox: function () {
+      return this.$el.find("input[type=checkbox]");
     },
 
     /**
        Focuses the checkbox.
     */
     enterEditMode: function () {
-      this.$el.find("input[type=checkbox]").focus();
+      this.checkbox().focus();
     },
 
     /**
        Unfocuses the checkbox.
     */
     exitEditMode: function () {
-      this.$el.find("input[type=checkbox]").blur();
+      this.checkbox().blur();
     },
 
     /**
@@ -88,7 +95,7 @@
       if (command.passThru()) return true; // skip ahead to `change`
       if (command.cancel()) {
         e.stopPropagation();
-        this.$el.find("input[type=checkbox]").blur();
+        this.checkbox().blur();
       }
       else if (command.save() || command.moveLeft() || command.moveRight() ||
                command.moveUp() || command.moveDown()) {
@@ -104,7 +111,7 @@
        checkbox's `checked` value.
     */
     onChange: function () {
-      var checked = this.$el.find("input[type=checkbox]").prop("checked");
+      var checked = this.checkbox().prop("checked");
       this.$el.parent().toggleClass("selected", checked);
       this.model.trigger("backgrid:selected", this.model, checked);
     },
@@ -166,20 +173,28 @@
         if (selected) selectedModels[model.id || model.cid] = 1;
         else {
           delete selectedModels[model.id || model.cid];
-          this.$el.find("input[type=checkbox]").prop("checked", false);
+          this.checkbox().prop("checked", false);
         }
       });
 
       this.listenTo(collection.fullCollection || collection, "remove", function (model) {
         delete selectedModels[model.id || model.cid];
+        if ((collection.fullCollection || collection).length === 0) {
+          this.checkbox().prop("checked", false);
+        }
       });
 
       this.listenTo(collection, "backgrid:refresh", function () {
-        var checked = this.$el.find("input[type=checkbox]").prop("checked");
-        for (var i = 0; i < collection.length; i++) {
-          var model = collection.at(i);
-          if (checked || selectedModels[model.id || model.cid]) {
-            model.trigger("backgrid:select", model, true);
+        if ((collection.fullCollection || collection).length === 0) {
+          this.checkbox().prop("checked", false);
+        }
+        else {
+          var checked = this.checkbox().prop("checked");
+          for (var i = 0; i < collection.length; i++) {
+            var model = collection.at(i);
+            if (checked || selectedModels[model.id || model.cid]) {
+              model.trigger("backgrid:select", model, true);
+            }
           }
         }
       });
@@ -206,7 +221,7 @@
        afterwards.
     */
     onChange: function () {
-      var checked = this.$el.find("input[type=checkbox]").prop("checked");
+      var checked = this.checkbox().prop("checked");
 
       var collection = this.collection;
       collection.each(function (model) {
