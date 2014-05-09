@@ -175,7 +175,7 @@
           delete selectedModels[model.id || model.cid];
           this.checkbox().prop("checked", false);
         }
-        if (Object.keys(selectedModels).length === (collection.fullCollection.length || collection.length)) {
+        if (Object.keys(selectedModels).length === (collection.fullCollection|| collection).length) {
           this.checkbox().prop("checked", true);
         }
       });
