@@ -168,13 +168,10 @@ describe("A SelectAllHeaderCell", function () {
     });
 
     it("will automatically select itself when all rows are selected", function () {
-      collection.once("test:ready", function() {
-        expect(cell.checkbox().prop("checked")).toBe(true);
-      });
       for(var i = 0; i < collection.length; i++){
         collection.at(i).trigger("backgrid:selected", collection.at(i), true);
       }
-      collection.trigger("test:ready");
+      expect(cell.checkbox().prop("checked")).toBe(true);
     });
 
   });
