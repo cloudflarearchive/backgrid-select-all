@@ -167,6 +167,13 @@ describe("A SelectAllHeaderCell", function () {
       expect(_.size(cell.selectedModels)).toBe(0);
     });
 
+    it("will automatically select itself when all rows are selected", function () {
+      for(var i = 0; i < collection.length; i++){
+        collection.at(i).trigger("backgrid:selected", collection.at(i), true);
+      }
+      expect(cell.checkbox().prop("checked")).toBe(true);
+    });
+
   });
 
   describe("when using a Backbone.PageableCollection unders server mode", function () {

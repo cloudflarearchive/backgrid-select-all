@@ -175,6 +175,9 @@
           delete selectedModels[model.id || model.cid];
           this.checkbox().prop("checked", false);
         }
+        if (_.keys(selectedModels).length === (collection.fullCollection|| collection).length) {
+          this.checkbox().prop("checked", true);
+        }
       });
 
       this.listenTo(collection.fullCollection || collection, "remove", function (model) {
