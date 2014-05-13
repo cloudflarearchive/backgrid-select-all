@@ -111,20 +111,20 @@ describe("A SelectAllHeaderCell", function () {
     it("unchecks itself when a model triggers a `backgrid:selected` event with a false value", function () {
       cell.$el.find(":checkbox").prop("checked", true).change();
       collection.at(0).trigger("backgrid:selected", collection.at(0), false);
-      expect(cell.$el.find(":checkbox").prop("checked"), false);
+      expect(cell.$el.find(":checkbox").prop("checked")).toBe(false);
     });
 
     it("unchecks itself when the collection becomes empty during removals", function () {
       cell.$el.find(":checkbox").prop("checked", true).change();
       while (collection.length) collection.remove(collection.first());
-      expect(cell.$el.find(":checkbox").prop("checked"), false);
+      expect(cell.$el.find(":checkbox").prop("checked")).toBe(false);
     });
 
     it("unchecks itself when the collection becomes empty after a `backgrid:refresh`", function () {
       cell.$el.find(":checkbox").prop("checked", true).change();
       collection.reset();
       collection.trigger("backgrid:refresh");
-      expect(cell.$el.find(":checkbox").prop("checked"), false);
+      expect(cell.$el.find(":checkbox").prop("checked")).toBe(false);
     });
 
     it("will trigger a `backgrid:select` event on all models after a `backgrid:refresh` event if checked", function () {
@@ -296,20 +296,20 @@ describe("A SelectAllHeaderCell", function () {
     it("unchecks itself when a model triggers a `backgrid:selected` event with a false value", function () {
       cell.$el.find(":checkbox").prop("checked", true).change();
       collection.fullCollection.last().trigger("backgrid:selected", collection.fullCollection.last(), false);
-      expect(cell.$el.find(":checkbox").prop("checked"), false);
+      expect(cell.$el.find(":checkbox").prop("checked")).toBe(false);
     });
 
     it("unchecks itself when the collection becomes empty during removals", function () {
       cell.$el.find(":checkbox").prop("checked", true).change();
       while (collection.fullCollection.length) collection.fullCollection.remove(collection.fullCollection.first());
-      expect(cell.$el.find(":checkbox").prop("checked"), false);
+      expect(cell.$el.find(":checkbox").prop("checked")).toBe(false);
     });
 
     it("unchecks itself when the collection becomes empty after a `backgrid:refresh`", function () {
       cell.$el.find(":checkbox").prop("checked", true).change();
       collection.fullCollection.reset();
       collection.trigger("backgrid:refresh");
-      expect(cell.$el.find(":checkbox").prop("checked"), false);
+      expect(cell.$el.find(":checkbox").prop("checked")).toBe(false);
     });
 
     it("triggers a `backgrid:select` event on each model on the current page after a `backgrid:refresh` event if checked", function () {
