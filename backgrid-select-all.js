@@ -9,12 +9,12 @@
 
   // CommonJS
   if (typeof exports == "object") {
-    module.exports = factory(require("backbone"), require("backgrid"));
+    module.exports = factory(require("backbone"), require("backgrid"), require("underscore"));
   }
   // Browser
-  else factory(root.Backbone, root.Backgrid);
+  else factory(root.Backbone, root.Backgrid, root._);
 
-}(this, function (Backbone, Backgrid) {
+}(this, function (Backbone, Backgrid, _) {
 
   "use strict";
 
