@@ -6,9 +6,11 @@
   Licensed under the MIT @license.
 */
 (function (root, factory) {
-
-  // CommonJS
-  if (typeof exports == "object") {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define(["backbone", "backgrid", "underscore"], factory);
+  } else if (typeof exports == "object") {
+    // CommonJS
     module.exports = factory(require("backbone"), require("backgrid"), require("underscore"));
   }
   // Browser
