@@ -21,6 +21,11 @@
   "bugs": {
     "url": "https://github.com/wyuenho/backgrid-select-all/issues"
   },
+  "dependencies": {
+    "backbone": "1.1.2 || 1.2.3 || ~1.3.2",
+    "backgrid": "^0.3.7",
+    "underscore": "^1.8.0"
+  },
   "devDependencies": {
     "backbone.paginator": "^2.0.0",
     "grunt": "^0.4.5",
@@ -42,10 +47,5 @@
     "karma-jasmine": "^0.3.8",
     "karma-jasmine-html-reporter": "^0.2.0",
     "karma-safari-launcher": "^0.1.1"
-  },
-  "dependencies": {
-    "backbone": "1.1.2 || 1.2.3 || ~1.3.2",
-    "backgrid": "^0.3.7",
-    "underscore": "^1.8.0"
   }
 }
