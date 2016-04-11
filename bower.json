@@ -4,7 +4,6 @@
     "backgrid-select-all.js",
     "backgrid-select-all.css"
   ],
-  "version": "0.3.5",
   "description": "Backgrid.js extension for multiple selections.",
   "homepage": "https://github.com/wyuenho/backgrid-select-all",
   "authors": [
