@@ -45,7 +45,6 @@ module.exports = function (grunt) {
           "title": "backgrid-select-all",
           "no-source": true,
           "categories": "categories.json",
-          "warnings": "-no_doc",
           "pretty-json": true
         }
       }
