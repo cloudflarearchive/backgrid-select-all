@@ -7,7 +7,7 @@
   "description": "Backgrid.js extension for multiple selections.",
   "homepage": "https://github.com/wyuenho/backgrid-select-all",
   "authors": [
-    "Jimmy Yuen Ho Wong <wyuenho@gmail.com>"
+    "Cloudflare, Inc <jwong@cloudflare.com>"
   ],
   "keywords": [
     "backbone",

@@ -2,7 +2,7 @@
   backgrid-select-all
   http://github.com/wyuenho/backgrid-select-all
 
-  Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
+  Copyright (c) 2013-present-present Cloudflare, Inc and contributors
   Licensed under the MIT license.
 */
 

@@ -76,6 +76,15 @@ Docs = {
         "sort": 3
       },
       {
+        "name": "checkbox",
+        "fullName": "Backgrid.Extension.SelectRowCell.checkbox",
+        "icon": "icon-method",
+        "url": "#!/api/Backgrid.Extension.SelectRowCell-method-checkbox",
+        "meta": {
+        },
+        "sort": 3
+      },
+      {
         "name": "enterEditMode",
         "fullName": "Backgrid.Extension.SelectRowCell.enterEditMode",
         "icon": "icon-method",
