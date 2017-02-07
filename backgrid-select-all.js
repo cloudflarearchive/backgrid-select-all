@@ -172,13 +172,15 @@
       var selectedModels = this.selectedModels = {};
       this.listenTo(collection.fullCollection || collection,
                     "backgrid:selected", function (model, selected) {
-        if (selected) selectedModels[model.id || model.cid] = 1;
+        if (selected) {
+            selectedModels[model.id || model.cid] = 1;
+            if (_.intersection(_.keys(selectedModels), (collection.fullCollection || collection).pluck('id')).length === (collection.fullCollection || collection).length) {
+                this.checkbox().prop("checked", true);
+            }
+        } 
         else {
           delete selectedModels[model.id || model.cid];
           this.checkbox().prop("checked", false);
-        }
-        if (_.keys(selectedModels).length === (collection.fullCollection|| collection).length) {
-          this.checkbox().prop("checked", true);
         }
       });
 
@@ -190,14 +192,11 @@
       });
 
       this.listenTo(collection, "backgrid:refresh", function () {
-        if ((collection.fullCollection || collection).length === 0) {
-          this.checkbox().prop("checked", false);
-        }
-        else {
-          var checked = this.checkbox().prop("checked");
+        this.checkbox().prop("checked", false);
+        if ((collection.fullCollection || collection).length !== 0) {
           for (var i = 0; i < collection.length; i++) {
             var model = collection.at(i);
-            if (checked || selectedModels[model.id || model.cid]) {
+            if (selectedModels[model.id || model.cid]) {
               model.trigger("backgrid:select", model, true);
             }
           }
