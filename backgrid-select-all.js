@@ -269,9 +269,12 @@
     if (selectAllHeaderCell) {
       var selectedModels = selectAllHeaderCell.selectedModels;
       var collection = this.collection.fullCollection || this.collection;
-      for (var modelId in selectedModels) {
-        result.push(collection.get(modelId));
-      }
+      collection.each(function (model) {
+        var key = model.id || model.cid;
+        if (_.has(selectedModels, key)) {
+          result.push(model);
+        }
+      });
     }
 
     return result;
