@@ -180,6 +180,7 @@
         if (_.keys(selectedModels).length === (collection.fullCollection|| collection).length) {
           this.checkbox().prop("checked", true);
         }
+        collection.trigger('backgrid:selection:updated');
       });
 
       this.listenTo(collection.fullCollection || collection, "remove", function (model) {
@@ -270,7 +271,10 @@
       var selectedModels = selectAllHeaderCell.selectedModels;
       var collection = this.collection.fullCollection || this.collection;
       for (var modelId in selectedModels) {
-        result.push(collection.get(modelId));
+        var model = collection.get(modelId);
+        if (model instanceof Backbone.Model) {
+          result.push(model);
+        }
       }
     }
 
